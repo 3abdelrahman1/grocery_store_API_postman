@@ -1,0 +1,1177 @@
+{
+	"info": {
+		"_postman_id": "badcbc9d-caf9-43d0-924f-12b0d3a2155f",
+		"name": "End_to_End",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Valid",
+			"item": [
+				{
+					"name": "GET status",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "00c1515c-3161-4ee4-8888-7ed3afae8e1c",
+								"exec": [
+									"let response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Should return a object\", function () {\r",
+									"    pm.expect(response, 'The response is not an object').to.be.an('object');\r",
+									"});\r",
+									"pm.test(\"Should contain the `status` property in the response\", function () {\r",
+									"    pm.expect(response, 'The response does not contain the property').to.haveOwnProperty('status');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Should return a string for the `status` property\", function () {\r",
+									"    pm.expect(response.status, 'The property is not a string').to.be.a('string');\r",
+									"});\r",
+									"pm.test(\"Should return a string for the `status` property\", function () {\r",
+									"    pm.expect(response.status, 'The property is not a string').to.eql('UP');\r",
+									"});\r",
+									"pm.expect(response).to.have.property('status', 'UP');"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "387ba92f-a6c2-405d-8874-592e8764c512",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{BaseUrl}}/status"
+					},
+					"response": []
+				},
+				{
+					"name": "GET all products",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b355354e-afb2-453e-a974-4e6ee14aa061",
+								"exec": [
+									"let response = pm.response.json();\r",
+									"const moment = require('moment');\r",
+									"const today = moment().format(\"YYYY-MM-DD\");\r",
+									"const responseDate = moment(response.updatedAt).format(\"YYYY-MM-DD\");\r",
+									"pm.test(\"successful response.\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"parameters provided are invalid.\", function () {\r",
+									"    pm.response.to.not.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test('\"content-type\" is present in response headers', () => {\r",
+									"    pm.response.to.have.header('content-type');\r",
+									"});\r",
+									"\r",
+									"pm.test('\"content-type\" response metadata is \"application/json\"', () => {\r",
+									"   \r",
+									"    // Using pm.expect\r",
+									"    pm.expect(pm.response.headers.get('content-type')).to.equal('application/json');\r",
+									"  \r",
+									"});\r",
+									"pm.test(\"Date is today\", function () {\r",
+									"    pm.expect(responseDate).to.equal(today);\r",
+									"});\r",
+									"\r",
+									"for (i = 0; i < response.length; i++) {\r",
+									"    let ID = pm.response.json()[i].id;\r",
+									"    pm.collectionVariables.set(\"id_\" + ID, ID);\r",
+									"    \r",
+									"}\r",
+									"\r",
+									"pm.test(\"Response schema is valid\", function () {\r",
+									"    const response = pm.response.json();\r",
+									"    pm.expect(response).to.be.an('array').that.is.not.empty;\r",
+									"\r",
+									"    response.forEach(product => {\r",
+									"        pm.expect(product).to.have.all.keys('id', 'category', 'name', 'inStock');\r",
+									"        pm.expect(product.id).to.be.a('number');\r",
+									"        pm.expect(product.category).to.be.a('string');\r",
+									"        pm.expect(product.name).to.be.a('string');\r",
+									"        pm.expect(product.inStock).to.be.a('boolean');\r",
+									"    });\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "216ab926-980b-4109-98fb-76914e1baa7b",
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "dcf04ba7-dda4-49b0-8b41-e3c3f87d24c0",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/products",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "fresh-produce",
+									"description": "Specifies the category of products you want to be returned. It can be one of: meat-seafood, fresh-produce, candy, bread-bakery, dairy, eggs, coffee.",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "results",
+									"value": "1",
+									"description": "Specifies the number of results you want. Must be number between 1 and 20. By default, only 20 products will be displayed.",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "available",
+									"value": "true",
+									"description": "Specifies the availability of the products. By default, all products will be displayed.",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET single product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e9f6172e-d3d9-4405-9777-1e79adf2b835",
+								"exec": [
+									"pm.test(\"successful response.\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"no product with the specified id.\", function () {\r",
+									"    pm.response.to.not.have.status(404);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "1e6dd91a-e33c-4e7b-be7d-7e32bde41936",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/products/{{id_1225}}",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"products",
+								"{{id_1225}}"
+							],
+							"query": [
+								{
+									"key": "product-label",
+									"value": "true",
+									"description": "Returns the product label in PDF format.",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a new cart",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e9380c98-154b-41d2-bce0-f9fe60a089d0",
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"let response=pm.response.json();\r",
+									"pm.test('validate creation and ID', () => {\r",
+									"  pm.expect(response).to.have.property('created');\r",
+									"  pm.expect(response.created).to.eql(true);\r",
+									"  pm.expect(response).to.have.ownProperty('cartId');\r",
+									"});\r",
+									"pm.test('created to be true', () => {\r",
+									"pm.expect(response.created).to.be.true;\r",
+									"});\r",
+									"pm.collectionVariables.set(\"CartID\", response.cartId);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "c9fc9185-b389-4d8c-848b-80a178c1411e",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{BaseUrl}}/carts"
+					},
+					"response": []
+				},
+				{
+					"name": "GET single cart",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "dae52014-9708-4fa6-b671-b2e5b0dd2cd8",
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "0702fb61-377c-48de-8062-61eb9c32e145",
+								"exec": [
+									"const response = pm.response.json();\r",
+									"const moment = require('moment');\r",
+									"const today = moment().format(\"YYYY-MM-DD\");\r",
+									"const responseDate = moment(response.updatedAt).format(\"YYYY-MM-DD\");\r",
+									"pm.test(\"Should contain an accounts 'array' in the response\", function () {\r",
+									"    pm.expect(response.items).to.be.an('array');\r",
+									"});\r",
+									"pm.test(\"items array to be empty\", function () {\r",
+									"    pm.expect(response.items).to.be.empty;\r",
+									"});\r",
+									"pm.test(\"Date is today\", function () {\r",
+									"    pm.expect(responseDate).to.equal(today);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "dc4d10f0-0816-47be-ba1d-02c2b989d7e6",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{BaseUrl}}/carts/{{CartID}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Add item to cart",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "7c4369d7-42ee-42fc-9f08-3ca2a80e1d3d",
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "ad35999d-250e-4f06-9742-f365d5ea0a86",
+								"exec": [
+									"const response = pm.response.json();\r",
+									"pm.collectionVariables.set(\"itemid\", response.itemId);\r",
+									"pm.test(\"Should contain an accounts 'array' in the response\", function () {\r",
+									"    pm.expect(response.created).to.be.true;\r",
+									"    pm.expect(response.itemId).to.be.a('number');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "25e11684-c636-46f1-881c-c7132513a491",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"productId\": \"{{id_1225}}\",\r\n   \"quantity\":\"3\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{BaseUrl}}/carts/{{CartID}}/items"
+					},
+					"response": []
+				},
+				{
+					"name": "GET single cart",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "dae52014-9708-4fa6-b671-b2e5b0dd2cd8",
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "0702fb61-377c-48de-8062-61eb9c32e145",
+								"exec": [
+									"const response = pm.response.json();\r",
+									"const moment = require('moment');\r",
+									"const today = moment().format(\"YYYY-MM-DD\");\r",
+									"const responseDate = moment(response.updatedAt).format(\"YYYY-MM-DD\");\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Should contain an accounts 'array' in the response\", function () {\r",
+									"    pm.expect(response.items).to.be.an('array');\r",
+									"    pm.expect(response.items).to.not.be.empty;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Date is today\", function () {\r",
+									"    pm.expect(responseDate).to.equal(today);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response matches JSON schema\", function () {\r",
+									"    const response = pm.response.json();\r",
+									"    const schema = {\r",
+									"        type: \"object\",\r",
+									"        properties: {\r",
+									"            items: {\r",
+									"                type: \"array\",\r",
+									"                items: {\r",
+									"                    type: \"object\",\r",
+									"                    properties: {\r",
+									"                        productId: { type: \"number\" },\r",
+									"                        id: { type: \"number\" },\r",
+									"                        quantity: { type: \"number\" }\r",
+									"                    },\r",
+									"                    required: [\"productId\", \"id\", \"quantity\"]\r",
+									"                }\r",
+									"            },\r",
+									"            created: { type: \"string\" }\r",
+									"        },\r",
+									"        required: [\"items\", \"created\"]\r",
+									"    };\r",
+									"    const Ajv = require(\"ajv\");\r",
+									"    const ajv = new Ajv();\r",
+									"    const validate = ajv.compile(schema);\r",
+									"    const valid = validate(response);\r",
+									"    pm.expect(valid, 'Response does not match schema').to.be.true;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "05f46930-11c7-4b70-baca-18cb8b8775fd",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{BaseUrl}}/carts/{{CartID}}"
+					},
+					"response": []
+				},
+				{
+					"name": "GET item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4f9d9408-f105-4f16-8164-c1db16626697",
+								"exec": [
+									"const response = pm.response.json();\r",
+									"const moment = require('moment');\r",
+									"const today = moment().format(\"YYYY-MM-DD\");\r",
+									"const responseDate = moment(response.updatedAt).format(\"YYYY-MM-DD\");\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Should contain an accounts 'array' in the response\", function () {\r",
+									"    pm.expect(response).to.be.an('array');\r",
+									"    pm.expect(response).to.not.be.empty;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Date is today\", function () {\r",
+									"    pm.expect(responseDate).to.equal(today);\r",
+									"});\r",
+									"\r",
+									"// JSON Schema for response validation\r",
+									"const schema = {\r",
+									"    type: \"array\",\r",
+									"    items: {\r",
+									"        type: \"object\",\r",
+									"        properties: {\r",
+									"            productId: { type: \"integer\" },\r",
+									"            id: { type: \"integer\" },\r",
+									"            quantity: { type: \"integer\" }\r",
+									"        },\r",
+									"        required: [\"productId\", \"id\", \"quantity\"]\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"pm.test(\"Response matches JSON schema\", function () {\r",
+									"    pm.expect(tv4.validate(response, schema)).to.be.true;\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "cb4fe834-ae68-4f56-86c1-3def11753f0c",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{BaseUrl}}/carts/{{CartID}}/items"
+					},
+					"response": []
+				},
+				{
+					"name": "modify Item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "079701b2-76b9-4191-88b8-a74480db19e7",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "8931a4d8-ee50-4a99-8a1e-2db34e239747",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"quantity\": {{quantity}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{BaseUrl}}/carts/{{CartID}}/items/{{itemid}}"
+					},
+					"response": []
+				},
+				{
+					"name": "GET item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "344197b4-961c-42f7-9269-add030e7bc98",
+								"exec": [
+									"let response = pm.response.json();\r",
+									"for (let i = 0; i < response.length; i++) {\r",
+									"    if (response[i].id === pm.collectionVariables.get(\"itemid\")) {\r",
+									"        pm.test(\"Item ID is correct\", function () {\r",
+									"            pm.expect(JSON.stringify(response[i].quantity)).to.eql(pm.collectionVariables.get(\"quantity\"));\r",
+									"        });\r",
+									"    }\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "9219afc5-c34a-49c6-960c-751996c4150e",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{BaseUrl}}/carts/{{CartID}}/items"
+					},
+					"response": []
+				},
+				{
+					"name": "replace item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "7197c3c4-b0ff-4c6c-a451-e2c06a2c68ab",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "bebff4f6-7c86-4b28-8d67-2aa1e8e0dc66",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"productId\": \"{{id_3674}}\",\r\n    \"quantity\":{{quantity}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{BaseUrl}}/carts/{{CartID}}/items/{{itemid}}"
+					},
+					"response": []
+				},
+				{
+					"name": "GET item Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "344197b4-961c-42f7-9269-add030e7bc98",
+								"exec": [
+									"let response = pm.response.json();\r",
+									"for (let i = 0; i < response.length; i++) {\r",
+									"    if (response[i].id === pm.collectionVariables.get(\"itemid\")) {\r",
+									"        pm.test(\"Item ID is correct\", function () {\r",
+									"            pm.expect(JSON.stringify(response[i].quantity)).to.eql(pm.collectionVariables.get(\"quantity\"));\r",
+									"        });\r",
+									"    }\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "33e4119d-b934-4096-a489-1586056dacd7",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{BaseUrl}}/carts/{{CartID}}/items"
+					},
+					"response": []
+				}
+			],
+			"id": "d63b3531-2be4-4c30-878c-83905ee100cc",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "47acc8b4-be03-4976-9c77-b936a4ccbf14",
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "13ccdfa5-7cc7-4679-b774-3ad7ef97ac45",
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Invalid",
+			"item": [
+				{
+					"name": "New Request",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1c8d0e4d-e12f-46cf-b5de-93bc84436dee",
+								"exec": [
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Should contain an accounts 'array' in the response\", function () {\r",
+									"    pm.expect(response.accounts).to.be.an('array');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Should return the correct account data for the `fromAccount` user\", function () {\r",
+									"    let fromAccount = response.accounts.filter(function (account) {\r",
+									"        return account.id === parseInt(pm.collectionVariables.get(\"e2e_user_account_id_from\"));\r",
+									"    });\r",
+									"    pm.expect(fromAccount[0]).to.be.an(\"object\");\r",
+									"    pm.expect(fromAccount[0].owner).to.eql(pm.collectionVariables.get(\"e2e_user_name_from\"));\r",
+									"    pm.expect(fromAccount[0].balance).to.eql(50);\r",
+									"    pm.expect(fromAccount[0].currency).to.eql(\"COSMIC_COINS\");\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Should return the correct account data for the `toAccount` user\", function () {\r",
+									"    let toAccount = response.accounts.filter(function (account) {\r",
+									"        return account.id === parseInt(pm.collectionVariables.get(\"e2e_user_account_id_to\"));\r",
+									"    });\r",
+									"    pm.expect(toAccount[0]).to.be.an(\"object\");\r",
+									"    pm.expect(toAccount[0].owner).to.eql(pm.collectionVariables.get(\"e2e_user_name_to\"));\r",
+									"    pm.expect(toAccount[0].balance).to.eql(0);\r",
+									"    pm.expect(toAccount[0].currency).to.eql(\"COSMIC_COINS\");\r",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "bf20fbeb-55c3-46f8-a0dd-77479e1db4d9",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "7b16f015-8b5b-4a0c-82dc-658aa359fd1c",
+								"exec": [
+									"let response = pm.response.json(),\r",
+									"    account_id = parseInt(pm.collectionVariables.get(\"e2e_user_account_id_to\")),\r",
+									"    owner = pm.collectionVariables.get(\"e2e_user_name_to\");\r",
+									"\r",
+									"pm.test(\"Should contain a account 'object' in the response\", function () {\r",
+									"    pm.expect(response.account).to.be.an('object');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Should contain the correct account id in the response\", function () {\r",
+									"    pm.expect(response.account.id).to.eql(account_id);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Should contain the correct owner in the response\", function () {\r",
+									"    pm.expect(response.account.owner).to.eql(owner);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Should contain the correct balance in the response\", function () {\r",
+									"    pm.expect(response.account.balance).to.eql(20);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Should contain the correct currency in the response\", function () {\r",
+									"    pm.expect(response.account.currency).to.eql(\"COSMIC_COINS\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "17acaca3-6a55-481d-92a6-ef5a9124deed",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "GET all products",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "45e6f88d-bff9-44b1-a5b0-577cee0a37f5",
+								"exec": [
+									"pm.test(\"parameters provided are invalid.\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"var jsonData = pm.response.json();\r",
+									"pm.test(\"error message to be correct\", function () {\r",
+									"    pm.expect(jsonData.error).to.not.be.undefined;\r",
+									"    pm.expect(jsonData.error).to.be.oneOf([\"Invalid value for query parameter 'category'. Must be one of: coffee, fresh-produce, meat-seafood, candy, dairy, bread-bakery, eggs\", \"Invalid value for query parameter 'available'. Must be one of: true, false\"]);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "7632cadb-3fce-4c8f-a905-09b0c03fed3c",
+								"exec": [
+									"\r",
+									"pm.variables.set(\"category1\", \"10\");\r",
+									"pm.variables.set(\"available1\",\"1\");"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "f67e0563-73ef-44bb-bf03-53e82f1c5f63",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/products?available={{available1}}",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "{{category1}}",
+									"disabled": true
+								},
+								{
+									"key": "available",
+									"value": "{{available1}}"
+								},
+								{
+									"key": "results",
+									"value": "5",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get single product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d28db748-c50c-4e09-b3b8-bd85dfa94509",
+								"exec": [
+									"pm.test(\"parameters provided are invalid.\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"var jsonData = pm.response.json();\r",
+									"pm.test(\"response body contains error message.\", function () { \r",
+									"    pm.expect(jsonData.error).to.not.be.undefined;\r",
+									"    pm.expect(jsonData.error).to.be.eql(\"The resource could not be found. Check your endpoint and request method.\")});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "0f0c4578-e91f-406d-a0c7-3c1598ec825f",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "{{BaseUrl}}/products/{{id_1225}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Get single product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "9db7cc4a-8670-4e7d-ba67-c778befcfb6c",
+								"exec": [
+									"pm.test(\"parameters provided are invalid.\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"var jsonData = pm.response.json();\r",
+									"pm.test(\"response body contains error message.\", function () { \r",
+									"    pm.expect(jsonData.error).to.not.be.undefined;\r",
+									"    pm.expect(jsonData.error).to.be.include( \"No product with id\"\r",
+									")});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "15f28f20-a5dd-4b98-8deb-c683142b1534",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{BaseUrl}}/products/{{id_12255}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Create a new cart Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e9380c98-154b-41d2-bce0-f9fe60a089d0",
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"let response=pm.response.json();\r",
+									"pm.test('validate creation and ID', () => {\r",
+									"  pm.expect(response).to.have.property('created');\r",
+									"  pm.expect(response.created).to.eql(true);\r",
+									"  pm.expect(response).to.have.ownProperty('cartId');\r",
+									"});\r",
+									"pm.test('created to be true', () => {\r",
+									"pm.expect(response.created).to.be.true;\r",
+									"});\r",
+									"pm.collectionVariables.set(\"CartID\", response.cartId);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "b85c54f5-c51e-4bde-9d8e-8e8149e9bc7c",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{BaseUrl}}/carts"
+					},
+					"response": []
+				},
+				{
+					"name": "Add item to cart",
+					"id": "fb9f33a3-2a27-4a1e-bec6-8bfa0c198752",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"productId\": \"{{id_3674}}\",\r\n   \"quantity\":\"3\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{BaseUrl}}/carts/{{CartID}}/items"
+					},
+					"response": []
+				},
+				{
+					"name": "Add item to cart",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "7d512d8e-9bed-4ced-b024-8cdfa00b2011",
+								"exec": [
+									"pm.test(\"parameters provided are invalid.\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"var jsonData = pm.response.json();\r",
+									"pm.test(\"response body contains error message.\", function () { \r",
+									"    pm.expect(jsonData.error).to.not.be.undefined;\r",
+									"    pm.expect(jsonData.error).to.be.eql(\"This product has already been added to cart.\")});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "1002a074-d427-4305-baa4-86685e4c8476",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"productId\": \"{{id_3674}}\",\r\n   \"quantity\":\"3\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						}
+					},
+					"response": []
+				}
+			],
+			"id": "ce975b36-4e81-4d08-b74e-afc38149d2a0"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "102b9a3e-40a4-40e5-877e-18c64d7b9602",
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "cf13139a-7e92-4815-981d-1b6488cf1fc2",
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					"// Test for response time\r",
+					"pm.test(\"Response time is less than 2 second\", () => {\r",
+					"    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+					"});"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "id_1225",
+			"value": ""
+		},
+		{
+			"key": "id_1709",
+			"value": ""
+		},
+		{
+			"key": "id_1710",
+			"value": ""
+		},
+		{
+			"key": "id_2177",
+			"value": ""
+		},
+		{
+			"key": "id_2585",
+			"value": ""
+		},
+		{
+			"key": "id_3486",
+			"value": ""
+		},
+		{
+			"key": "id_3674",
+			"value": ""
+		},
+		{
+			"key": "id_4641",
+			"value": ""
+		},
+		{
+			"key": "id_4643",
+			"value": ""
+		},
+		{
+			"key": "id_4646",
+			"value": ""
+		},
+		{
+			"key": "id_4875",
+			"value": ""
+		},
+		{
+			"key": "id_5477",
+			"value": ""
+		},
+		{
+			"key": "id_5478",
+			"value": ""
+		},
+		{
+			"key": "id_5499",
+			"value": ""
+		},
+		{
+			"key": "id_5774",
+			"value": ""
+		},
+		{
+			"key": "id_5851",
+			"value": ""
+		},
+		{
+			"key": "id_6483",
+			"value": ""
+		},
+		{
+			"key": "id_6543",
+			"value": ""
+		},
+		{
+			"key": "id_7395",
+			"value": ""
+		},
+		{
+			"key": "id_8554",
+			"value": ""
+		},
+		{
+			"key": "CartID",
+			"value": ""
+		},
+		{
+			"key": "itemid",
+			"value": ""
+		},
+		{
+			"key": "quantity",
+			"value": ""
+		}
+	]
+}

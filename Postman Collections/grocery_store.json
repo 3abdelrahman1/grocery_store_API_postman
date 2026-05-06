@@ -1015,7 +1015,7 @@
 								"id": "7d512d8e-9bed-4ced-b024-8cdfa00b2011",
 								"exec": [
 									"pm.test(\"parameters provided are invalid.\", function () {\r",
-									"    pm.response.to.have.status(404);\r",
+									"    pm.response.to.have.status(400);\r",
 									"});\r",
 									"var jsonData = pm.response.json();\r",
 									"pm.test(\"response body contains error message.\", function () { \r",
@@ -1043,7 +1043,8 @@
 									"language": "json"
 								}
 							}
-						}
+						},
+						"url": "{{BaseUrl}}/carts/{{CartID}}/items"
 					},
 					"response": []
 				}

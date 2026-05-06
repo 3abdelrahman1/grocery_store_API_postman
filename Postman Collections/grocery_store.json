@@ -831,7 +831,7 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "{{BaseUrl}}/products/{{id_12255}}"
+						"url": "{{BaseUrl}}/products/123"
 					},
 					"response": []
 				},

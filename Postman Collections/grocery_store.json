@@ -958,9 +958,14 @@
 							"script": {
 								"id": "7197c3c4-b0ff-4c6c-a451-e2c06a2c68ab",
 								"exec": [
-									"pm.test(\"Status code is 200\", function () {\r",
-									"    pm.response.to.have.status(204);\r",
-									"});"
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"var jsonData = pm.response.json();\r",
+									"pm.test(\"response body contains error message.\", function () { \r",
+									"    pm.expect(jsonData.error).to.not.be.undefined;\r",
+									"    pm.expect(jsonData.error).to.be.include( \"No item with id\"\r",
+									")});"
 								],
 								"type": "text/javascript",
 								"packages": {},
@@ -985,6 +990,41 @@
 							}
 						},
 						"url": "{{BaseUrl}}/carts/{{CartID}}/items/{{itemid}}"
+					},
+					"response": []
+				},
+				{
+					"name": "GET item Copy 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "344197b4-961c-42f7-9269-add030e7bc98",
+								"exec": [
+									"let response = pm.response.json();\r",
+									"for (let i = 0; i < response.length; i++) {\r",
+									"    if (response[i].id === pm.collectionVariables.get(\"itemid\")) {\r",
+									"        pm.test(\"Item ID is correct\", function () {\r",
+									"            pm.expect(JSON.stringify(response[i].quantity)).to.eql(pm.collectionVariables.get(\"quantity\"));\r",
+									"        });\r",
+									"    }\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "532ff076-9efd-4db5-b827-ba9215b981b4",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{BaseUrl}}/carts/{{CartID}}/items"
 					},
 					"response": []
 				}

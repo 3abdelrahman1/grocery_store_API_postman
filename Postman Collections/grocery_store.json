@@ -949,6 +949,44 @@
 						"url": "{{BaseUrl}}/carts/{{CartID}}/items"
 					},
 					"response": []
+				},
+				{
+					"name": "replace item Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "7197c3c4-b0ff-4c6c-a451-e2c06a2c68ab",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "8efaf622-240e-4953-9816-52f158ff4445",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"productId\": \"{{id_3674}}\",\r\n    \"quantity\":{{quantity}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{BaseUrl}}/carts/{{CartID}}/items/{{itemid}}"
+					},
+					"response": []
 				}
 			],
 			"id": "ce975b36-4e81-4d08-b74e-afc38149d2a0"
